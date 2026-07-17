@@ -136,9 +136,11 @@ public class SorterSubsystem implements Subsystem {
         currentSlot = (currentSlot + 1) % 3;
     }
     public void home(){
-        moveDegrees(-STARTING_OFFSET);
-        offsetApplied = false;
-        currentSlot = 0;
+        if (offsetApplied) {
+            moveDegrees(-STARTING_OFFSET);
+            offsetApplied = false;
+            currentSlot = 0;
+        }
     }
 
     public void adjustTargetTicks(int delta) {

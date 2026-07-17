@@ -26,6 +26,8 @@ public class ArtifactManager {
     private static final long SAMPLING_DURATION_MS = 100;
     private final ElapsedTime samplingTimer = new ElapsedTime();
     private boolean lastDetected = false;
+    private boolean motifMode = false;
+    private boolean motifToggleTriggered = false;
 
     public void manualDetect(int slot, String color) {
         if (artifactCount >= storedArtifacts.length) return;
@@ -77,6 +79,20 @@ public class ArtifactManager {
         return false;
     }
 
+    public void toggleMotifMode() {
+        motifMode = !motifMode;
+        motifToggleTriggered = true;
+    }
+    public boolean isMotifMode(){
+        return motifMode;
+    }
+    public boolean consumeMotifToggle() {
+        if (!motifToggleTriggered) return false;
+
+        motifToggleTriggered = false;
+        return true;
+    }
+
     private void storeArtifact(int currentSlot, String color) {
         if (artifactCount >= storedArtifacts.length) return;
 
@@ -88,6 +104,7 @@ public class ArtifactManager {
         if (isSlotEmpty(currentSlot)) storedArtifacts[currentSlot] = color;
         syncArtifactCount();
     }
+
     public int getNextArtifactSlot() {
         if (this.artifactCount < 1) return -1;
         for (int i = 0; i < storedArtifacts.length; i++) {
@@ -97,6 +114,7 @@ public class ArtifactManager {
         }
         return -1;
     }
+
     public int getMotifSlot(){
         if (this.artifactCount < 1) return -1;
         String targetArtifact = motif[motifNextIndex % motif.length];
@@ -107,6 +125,7 @@ public class ArtifactManager {
         }
         return  getNextArtifactSlot();
     }
+
     public void removeArtifact(int currentSlot) {
         if (currentSlot < 0 || currentSlot >= storedArtifacts.length) return;
 
@@ -117,6 +136,7 @@ public class ArtifactManager {
             syncArtifactCount();
         }
     }
+
     public void seedArtifacts(String... colors) {
         resetArtifacts();
         int count = Math.min(colors.length, storedArtifacts.length);
@@ -150,12 +170,14 @@ public class ArtifactManager {
         }
         artifactCount = count;
     }
+
     public int getArtifactCount(){
         return artifactCount;
     }
     public boolean isLastArtifact(){
-        return artifactCount >= 2;
+        return artifactCount == 2;
     }
+
     public void resetArtifacts() {
         isSampling = false;
         sampleCount = 0;

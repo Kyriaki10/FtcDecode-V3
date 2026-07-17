@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SorterSubsystem;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import dev.nextftc.core.commands.Command;
@@ -27,7 +28,8 @@ public class IntakeActions {
         return new WaitUntil(() ->
                 ArtifactManager.INSTANCE.detectArtifact(SorterSubsystem.INSTANCE.getCurrentSlot()))
                 .thenWait(0.05)
-                .then(new IfElseCommand(() -> !ArtifactManager.INSTANCE.isFull(),
+                .then(new IfElseCommand(
+                        () -> !ArtifactManager.INSTANCE.isFull(),
                         SorterCommands.advanceToNextSlot()));
     }
 
@@ -36,8 +38,11 @@ public class IntakeActions {
         return new WaitUntil(ArtifactManager.INSTANCE::isFull)
                 .then(IntakeCommands.reverse())
                 .then(IntakeCommands.stop())
-                .then(SorterCommands.alignNextArtifact())
-                .and(ShooterCommands.setTargetVelocity(targetVelocity.getAsDouble()));
+                .then(new IfElseCommand(
+                        ArtifactManager.INSTANCE::isMotifMode,
+                        SorterCommands.alignMotifArtifact(),
+                        SorterCommands.alignNextArtifact())
+                .and(ShooterCommands.setTargetVelocity(targetVelocity.getAsDouble())));
     }
     public static Command returnToIntake(){
         return SorterCommands.removeLatestArtifact()
