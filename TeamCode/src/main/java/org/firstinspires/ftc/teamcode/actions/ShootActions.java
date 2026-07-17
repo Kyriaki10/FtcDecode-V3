@@ -77,7 +77,7 @@ public class ShootActions {
         cancelRequested = true;
     }
 
-    public static Command startShooting() { //used to start shooting or restart after cancellation
+    public static Command startShooting() {
         cancelRequested = false;
         shooting = true;
         return shootAll();
