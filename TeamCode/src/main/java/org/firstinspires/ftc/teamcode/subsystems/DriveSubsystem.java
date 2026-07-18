@@ -18,8 +18,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 
 public class DriveSubsystem implements Subsystem {
     private static final Follower follower = Constants.createFollower(hardwareMap);
-    private static final Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-    public static final DriveSubsystem INSTANCE = new DriveSubsystem(follower, limelight);
+    public static final DriveSubsystem INSTANCE = new DriveSubsystem(follower);
 
 
     private final MotorEx leftFront = new MotorEx("leftFront")
@@ -40,7 +39,7 @@ public class DriveSubsystem implements Subsystem {
     private double lastKnownHeading = Double.NaN;
     private final ElapsedTime refreshTimer = new ElapsedTime();
 
-    public DriveSubsystem(Follower follower, Limelight3A limelight) {
+    public DriveSubsystem(Follower follower) {
     }
 
     public void drive(double x, double y, double rotation){
@@ -69,9 +68,8 @@ public class DriveSubsystem implements Subsystem {
     }
 
     public double outputTargetTurn(double x, double y){
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            double tx = result.getTx();
+        double tx = VisionSubsystem.INSTANCE.getHeadingError();
+        if (tx != -1) {
             lastKnownHeading = follower.getPose().getHeading() + Math.toRadians(tx);
             refreshTimer.reset();
 

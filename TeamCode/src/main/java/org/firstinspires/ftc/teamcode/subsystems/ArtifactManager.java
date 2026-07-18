@@ -13,10 +13,14 @@ import java.util.Objects;
 public class ArtifactManager {
     public static final ArtifactManager INSTANCE = new ArtifactManager();
     ArtifactManager() {}
+
     private final ColorRangeSensor colorSensor = hardwareMap.get(ColorRangeSensor.class, " color sensor");
     private final String[] storedArtifacts = new String[3];
     private int artifactCount = 0;
-    private String[] motif = {"G", "P", "P"};
+
+    private String[] motif = DEFAULT_MOTIF.clone();
+    private static final String[] DEFAULT_MOTIF = {"P", "P", "G"};
+
     private int motifNextIndex = 0;
     private final ElapsedTime detectTimer = new ElapsedTime();
     private static final long SLOT_DEBOUNCE_MS = 300;
@@ -157,8 +161,13 @@ public class ArtifactManager {
     public boolean isFull() {
         return artifactCount == storedArtifacts.length;
     }
-    public void setMotif(String[] targetMotif){
-        motif = Arrays.copyOf(targetMotif, 3);
+
+    public void updateMotif(String[] motif) {
+        this.motif = Arrays.copyOf(motif, motif.length);
+    }
+
+    public void resetMotif() {
+        this.motif = DEFAULT_MOTIF.clone();
     }
 
     private void syncArtifactCount() {
