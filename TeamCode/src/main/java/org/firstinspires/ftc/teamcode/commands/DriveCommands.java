@@ -16,9 +16,7 @@ public final class DriveCommands {
         return new LambdaCommand("Drive")
                 .setUpdate(() ->
                         DriveSubsystem.INSTANCE.drive
-                                (x.getAsDouble(),
-                                        y.getAsDouble(),
-                                        rotation.getAsDouble()))
+                                (x.getAsDouble(), y.getAsDouble(), rotation.getAsDouble()))
                 .requires(DriveSubsystem.INSTANCE);
     }
     public static Command faceTarget (DoubleSupplier x,

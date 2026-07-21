@@ -6,8 +6,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
-import java.util.List;
-
 import dev.nextftc.core.subsystems.Subsystem;
 
 public class VisionSubsystem implements Subsystem {
@@ -32,6 +30,7 @@ public class VisionSubsystem implements Subsystem {
     private static boolean update;
 
     private int loopCount = 0;
+    private static boolean motifDetected;
 
     @Override
     public void periodic(){
@@ -71,7 +70,7 @@ public class VisionSubsystem implements Subsystem {
         if(!hasResult()) return -1;
 
         for(LLResultTypes.FiducialResult f : result.getFiducialResults()){
-            return (int) f.getFiducialId();
+            return f.getFiducialId();
         }
         return -1;
     }
@@ -79,12 +78,16 @@ public class VisionSubsystem implements Subsystem {
     public String[] detectMotif() {
         switch (getMotifId()) {
             case 21:
+                motifDetected = true;
                 return new String[]{"G", "P", "P"};
             case 22:
+                motifDetected = true;
                 return new String[]{"P", "G", "P"};
             case 23:
+                motifDetected = true;
                 return new String[]{"P", "P", "G"};
             default:
+                motifDetected = false;
                 return null;
         }
     }
@@ -92,6 +95,7 @@ public class VisionSubsystem implements Subsystem {
         if (currentPipeline != pipeline) {
             limelight.pipelineSwitch(pipeline);
             currentPipeline = pipeline;
+            result = null;
         }
     }
     public void stop(){
@@ -99,8 +103,12 @@ public class VisionSubsystem implements Subsystem {
         limelight.stop();
     }
     public void start(){
+        result = null;
         update = true;
         limelight.start();
+    }
+    public boolean isMotifDetected(){
+        return motifDetected;
     }
 
     public double getDistance(){

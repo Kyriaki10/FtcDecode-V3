@@ -82,6 +82,7 @@ public class SorterSubsystem implements Subsystem {
         dt = Math.max((now - lastTime) / 1000.0, 0.001);
         lastTime = now;
     }
+
     private void runPID() {
         double voltage = hw.getBatteryVoltage();
         double dynamicKD = 0.0000165 - (voltage - 12.0) * 0.000000125;
@@ -100,6 +101,7 @@ public class SorterSubsystem implements Subsystem {
 
         sorter.setPower(power);
     }
+
     private void updateStuckDetection() {
         recovery.update(error);
         if (recovery.justEntered(SorterRecovery.State.RECOVERING)) {

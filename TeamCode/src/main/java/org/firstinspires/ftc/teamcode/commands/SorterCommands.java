@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import android.content.ContentQueryMap;
-
 import org.firstinspires.ftc.teamcode.subsystems.ArtifactManager;
 import org.firstinspires.ftc.teamcode.subsystems.SorterSubsystem;
 
@@ -42,6 +40,12 @@ public final class SorterCommands {
                 .setStart(() -> SorterSubsystem.INSTANCE.adjustTargetTicks(delta))
                 .setIsDone(() -> true)
                 .requires(SorterSubsystem.INSTANCE);
+    }
+    public static Command manualOverride(String color){
+        return new LambdaCommand("Manually Detect Artifact")
+                .setStart(() -> ArtifactManager.INSTANCE.manualDetect(SorterSubsystem.INSTANCE.getCurrentSlot(), color))
+                .setIsDone(() -> true)
+                .requires(SorterSubsystem.INSTANCE, ArtifactManager.INSTANCE);
     }
     public static Command removeLatestArtifact(){
         return new LambdaCommand("Remove Latest Artifact")
